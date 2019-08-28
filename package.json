@@ -3,8 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
+    "bootstrap": "^4.0.0-alpha.6",
+    "fusioncharts": "^3.14.0-sr.1",
+    "moment": "^2.22.2",
+    "moment-timezone": "^0.5.21",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-fusioncharts": "^3.0.1",
     "react-scripts": "3.1.1"
   },
   "scripts": {
