@@ -1,10 +1,16 @@
 import React from 'react';
+import TempVarChart from './TempVarChart';
+import Highlights from './Highlights';
 
 const content = (props) => {
     return (
         <div>
-            <p>{props.highlights}</p>
-            <p>{props.tempVar}</p>
+            <TempVarChart
+                persons={props.persons}
+            />
+            <Highlights
+                persons={props.persons}
+            />
         </div>
     );
 }
