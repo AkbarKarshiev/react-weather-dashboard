@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 
 class WindStatus extends Component {
     render() {
-        console.log(this.props.windstatus)
         return (
             <div>  
                 <p>WindStatus:</p>
-                <li>Speed: {this.props.windstatus[0].speed}</li> 
-                <li>Direction: {this.props.windstatus[1].direction}</li> 
+                <p>Speed: {this.props.windstatus[0].windSpeed}</p> 
+                <p>Wind Direction — {this.props.windstatus[2].derivedWindDirection}, or {this.props.windstatus[1].windDirection} degree clockwise with respect to true N as 0 degree.</p>
                 <hr/>
             </div>
         );

@@ -8,10 +8,10 @@ const content = (props) => {
             <p><b>This is Content component</b></p>
             <hr/>
             <TempVarChart
-                tempVar={props.weather_data[1].temperature[0]}
+                tempToday={props.tempToday}
             />
             <Highlights
-                highlights={props.weather_data[2].highlights}
+                highlights={props.highlights}
             />
             
         </div>

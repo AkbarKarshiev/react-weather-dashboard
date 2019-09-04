@@ -10,10 +10,10 @@ const content = (props) => {
                 uvindex={props.highlights[0].uvindex}
             />
             <Visibility
-                visibility={props.highlights[2].visibility}
+                visibility={props.highlights[1].visibility}
             />
             <WindStatus 
-                windstatus={props.highlights[1].windstatus}
+                windstatus={props.highlights[2].windstatus}
             />            
         </div>
     );
