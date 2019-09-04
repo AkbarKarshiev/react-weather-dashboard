@@ -4,9 +4,19 @@ import Content from '../components/Content';
 
 class App extends Component {
   state = {
-    persons: [
-      {id: 'sad', name: 'Max', age: '45'},
-      {id: 'sad', name: 'Manu', age: '45'}
+    weather_data: [
+      { location: "California" },
+      { temperature: [
+        { current: "35 C" }
+      ]},
+      { highlights: [
+        { uvindex: "3" },
+        { windstatus: [
+          { speed: "20 km/h"},
+          { direction: "N-E" }
+        ]},
+        { visibility: "12 km" }
+      ]}
     ]
   };
   
@@ -15,6 +25,7 @@ class App extends Component {
       <div id="ancestor">            
         <Content 
           persons={this.state.persons}
+          weather_data={this.state.weather_data}
         />
       </div>
     );

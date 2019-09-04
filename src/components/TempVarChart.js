@@ -4,9 +4,8 @@ class TempVarChart extends Component {
     render() {
         return (
             <div>  
-                <li>TempVarChart</li>
-                <li>I'm {this.props.persons[0].name} hero</li>             
-                <li>I'm {this.props.persons[1].name} hero</li> 
+                <p>Temperature information</p>
+                <p>{this.props.tempVar.current}</p>            
                 <hr/>
             </div>
         );

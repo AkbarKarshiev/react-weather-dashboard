@@ -5,12 +5,15 @@ import Highlights from './Highlights';
 const content = (props) => {
     return (
         <div>
+            <p><b>This is Content component</b></p>
+            <hr/>
             <TempVarChart
-                persons={props.persons}
+                tempVar={props.weather_data[1].temperature[0]}
             />
             <Highlights
-                persons={props.persons}
+                highlights={props.weather_data[2].highlights}
             />
+            
         </div>
     );
 }

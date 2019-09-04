@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 
 class WindStatus extends Component {
     render() {
+        console.log(this.props.windstatus)
         return (
             <div>  
-                <li>WindStatus</li>
-                <li>I'm {this.props.persons[0].name} hero</li>             
-                <li>I'm {this.props.persons[1].name} hero</li> 
+                <p>WindStatus:</p>
+                <li>Speed: {this.props.windstatus[0].speed}</li> 
+                <li>Direction: {this.props.windstatus[1].direction}</li> 
                 <hr/>
             </div>
         );

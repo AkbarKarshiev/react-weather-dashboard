@@ -4,9 +4,8 @@ class UVIndex extends Component {
     render() {
         return (
             <div>  
-                <li>Visibility</li>
-                <li>I'm {this.props.persons[0].name} hero</li>             
-                <li>I'm {this.props.persons[1].name} hero</li> 
+                <p>Visibility:</p>
+                <p>{this.props.visibility}</p> 
                 <hr/>
             </div>
         );

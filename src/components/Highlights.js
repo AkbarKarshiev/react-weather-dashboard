@@ -7,13 +7,13 @@ const content = (props) => {
     return (
         <div>
             <UVIndex 
-                persons={props.persons}
+                uvindex={props.highlights[0].uvindex}
             />
             <Visibility
-                persons={props.persons}
+                visibility={props.highlights[2].visibility}
             />
             <WindStatus 
-                persons={props.persons}
+                windstatus={props.highlights[1].windstatus}
             />            
         </div>
     );
