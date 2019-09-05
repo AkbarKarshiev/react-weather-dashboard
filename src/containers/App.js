@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import './App.css';
 import calendar from '../assets/calendar.svg';
-import location from '../assets/calendar.svg';
+import location from '../assets/location.svg';
+import search from '../assets/search.svg';
 import UtilityFunctions from './UtilityFunctions';
 // import Content from '../components/Content';
 
@@ -9,6 +10,8 @@ class App extends Component {
 
   // Object of Util functions class to use its methods
   utilFunctions = new UtilityFunctions(); 
+  // Object to get the value of select dropdown list
+  selectInput = React.createRef();
 
   state = {
     weatherDetails: false,
@@ -64,15 +67,26 @@ class App extends Component {
       ]}
     ]  
   };
+  
+  handleChoice = () => {
+    console.log(this.selectInput.current.value);
+  }
 
-  render() {
-    const styleLocation = {
-      opacity: '0.9'
-    }
-    console.log(this.utilFunctions.deriveWindDir(50));
-    
+  render() {    
     return (
-      <div id="info">    
+      <div id="info">  
+        {/* dropdown selection */}
+        <div className="dropDown"> 
+          <select className="custom-select custom-select-sm" ref={this.selectInput}>>
+            <option value="tashkent" defaultValue>Tashkent</option>
+            <option value="samarkand">Samarkand</option>
+            <option value="bukhara">Bukhara</option>
+          </select>
+          <button id="search-btn" onClick={this.handleChoice}>
+            <img src={search} width="15" height="15" alt="search"/>
+          </button>
+        </div>
+
         <div className="wrapper-left">
           <div id="current-weather">
             {this.state.currentWeather[4].temp}
@@ -109,7 +123,7 @@ class App extends Component {
                 <img src={location} 
                   width="10.83"
                   height="15.83"
-                  style={styleLocation}
+                  style={{opacity: 0.9}}
                   alt="location"/>
                 {this.state.currentWeather[0].full_location}
                 <div id="location-detail" className="mt-1">

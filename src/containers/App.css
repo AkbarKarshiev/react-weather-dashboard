@@ -5,6 +5,7 @@
 }
 
 body {
+   /* background-color: #000; */
    font-family: Roboto;
    font-weight: 400;
    width: 100%;
@@ -116,14 +117,18 @@ body {
 
 #search-btn {
    position: absolute;
-   right: 0;
-   top: 16px;
+   margin-left: 5px;
+   top: 0px;
    padding: 2px;
    z-index: 999;
-   height: 42px;
-   width: 45px;
+   height: 21px;
+   width: 21px;
    background-color: rgba(255, 255, 255, 0.2);
    border: none;
+}
+
+#search-btn:hover {
+   cursor: pointer;
 }
 
 #dashboard-content {
@@ -180,6 +185,11 @@ body {
 
 #dashboard-content {
    background-color: #F7F7F7;
+}
+
+.dropDown {
+   font-size: 1.6rem;
+   font-weight: 500;
 }
 
 .custom-card {
@@ -261,7 +271,7 @@ hr {
 
    #info {
        position: fixed;
-       bottom: 50px;
+       /* bottom: 50px; */
        width: 100%;
        padding-left: 15px;
    }
