@@ -360,7 +360,6 @@ class App extends Component {
   // Top level organization and rendering
   organizeAllDetails = async () => {
     // top level organization
-    // await this.fetchWeatherData();
     this.setCurrentWeatherInfo();
     this.setTodayHighlightsInfo();
     this.getSetHourlyTempInfoToday();
