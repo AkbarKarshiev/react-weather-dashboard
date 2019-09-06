@@ -375,6 +375,12 @@ class App extends Component {
     this.getSetHourlyTempInfoToday();
     console.log(this.state);
   }
+
+  async componentDidMount() {
+    const loc = this.utilFunctions.convertToTitleCase(this.selectInput.current.value);
+    await this.setState({location: loc});
+    this.fetchWeatherDataAndOrganizeAllDetails();
+  }
 }
 
 export default App;
