@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import './App.css';
 import calendar from '../assets/calendar.svg';
-import location from '../assets/location.svg';
+import locationSvg from '../assets/location.svg';
 import search from '../assets/search.svg';
 import UtilityFunctions from './UtilityFunctions';
+import axios from 'axios';
 // import Content from '../components/Content';
 
 class App extends Component {
@@ -12,6 +13,11 @@ class App extends Component {
   utilFunctions = new UtilityFunctions(); 
   // Object to get the value of select dropdown list
   selectInput = React.createRef();
+  cityLocations = [
+    {id: 1, name: 'Tashkent', lat: '41.2995', long: '69.2401', full_location: 'Taskent, Uzbekistan'},
+    {id: 2, name: 'Samarkand', lat: '39.6270', long: '66.9750', full_location: 'Samarkand, Uzbekistan'},
+    {id: 3, name: 'New York', lat: '40.7128', long: '74.005', full_location: 'New York, NY, USA'}
+  ]
 
   state = {
     weatherDetails: false,
@@ -67,12 +73,8 @@ class App extends Component {
       ]}
     ]  
   };
-  
-  handleChoice = () => {
-    console.log(this.selectInput.current.value);
-  }
 
-  render() {    
+  render() { 
     return (
       <div id="info">  
         {/* dropdown selection */}
@@ -80,13 +82,17 @@ class App extends Component {
           <select className="custom-select custom-select-sm" ref={this.selectInput}>>
             <option value="tashkent" defaultValue>Tashkent</option>
             <option value="samarkand">Samarkand</option>
-            <option value="bukhara">Bukhara</option>
+            <option value="new york">New York</option>
           </select>
           <button id="search-btn" onClick={this.handleChoice}>
             <img src={search} width="15" height="15" alt="search"/>
           </button>
+          <p>{this.state.location}</p>
+          <p>format_lat: {this.state.currentWeather[1].formatted_lat} format_long: {this.state.currentWeather[2].formatted_long} full_location: {this.state.currentWeather[0].full_location}</p>
         </div>
-
+        <button onClick={this.fetchWeatherData}>
+            Simple button
+        </button>
         <div className="wrapper-left">
           <div id="current-weather">
             {this.state.currentWeather[4].temp}
@@ -120,7 +126,7 @@ class App extends Component {
             </div>
             <div className="locaion-info">
               <div id="location-desc">
-                <img src={location} 
+                <img src={locationSvg} 
                   width="10.83"
                   height="15.83"
                   style={{opacity: 0.9}}
@@ -141,6 +147,95 @@ class App extends Component {
         /> */}
       </div>
     );
+  }
+
+  handleChoice = () => {
+    // console.log(this.selectInput.current.value);
+    const loc = this.utilFunctions.convertToTitleCase(this.selectInput.current.value);
+    this.setState({location: loc});
+  }
+
+  makeTempTodayEmpty = () => {
+    this.setState({tempToday: []})    
+  }
+
+  locationEntered = () => {
+    if(this.state.location === '') {
+      this.setState({location: 'Tashkent'});
+    }
+    // this.makeTempTodayEmpty();
+  }
+
+  getCoordinates = () => {
+    this.locationEntered();
+    var loc = this.state.location;
+    const coords = {
+      lat: '',
+      long: '',
+      full_location: ''
+    };
+    this.cityLocations.map((city) => {
+      if (loc === city.name) {
+        this.setState({lat: city.lat});
+        this.setState({long: city.long});
+        coords.lat = this.state.lat;
+        coords.long = this.state.long;
+        coords.full_location = city.full_location;
+      } 
+      return null;
+    })
+    return coords;
+  }
+
+  setFormatCoordinates = async () => {
+    const coordinates = await this.getCoordinates();
+    let form_lat = '';
+    let form_long = '';
+    let currentWeatherCopy = JSON.parse(JSON.stringify(this.state.currentWeather));
+
+    // Remember to beautify lat for N/S
+    if (coordinates.lat > 0) {
+      form_lat = (Math.round(coordinates.lat * 10000) / 10000).toString() + '°N';
+    } else if (coordinates.lat < 0) {
+      form_lat = (-1 * (Math.round(coordinates.lat * 10000) / 10000)).toString() + '°S';
+    } else {
+      form_lat = (Math.round(coordinates.lat * 10000) / 10000).toString();
+    }
+    // Remember to beautify long for N/S
+    if (coordinates.long > 0) {
+      form_long = (Math.round(coordinates.long * 10000) / 10000).toString() + '°E';
+    } else if (coordinates.long < 0) {
+      form_long = (-1 * (Math.round(coordinates.long * 10000) / 10000)).toString() +'°W';
+    } else {
+      form_long = (Math.round(coordinates.long * 10000) / 10000).toString();
+    }
+    
+    currentWeatherCopy[0].full_location = coordinates.full_location;
+    currentWeatherCopy[1].formatted_lat = form_lat;
+    currentWeatherCopy[2].formatted_long = form_long; 
+    this.setState({currentWeather: currentWeatherCopy});
+  }
+
+  fixWeatherApi = async () => {
+    await this.setFormatCoordinates();
+    const weatherApi = 
+      'https://csm.fusioncharts.com/files/assets/wb/wb-data.php?src=darksky&lat=' + 
+      this.state.lat + '&long=' + 
+      this.state.long;
+    console.log(weatherApi);
+    this.setState({completeWeatherApi: weatherApi});
+  }
+
+  fetchWeatherData = async () => {
+    await this.fixWeatherApi();
+    axios.get(this.state.completeWeatherApi)
+    .then(response => {
+      this.setState({rawWeatherData: response.data});
+      console.log(this.state.rawWeatherData);
+    })
+    .catch(error => {
+      alert(error);
+    });
   }
 }
 
