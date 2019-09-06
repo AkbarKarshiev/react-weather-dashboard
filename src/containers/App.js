@@ -5,6 +5,7 @@ import locationSvg from '../assets/location.svg';
 import search from '../assets/search.svg';
 import UtilityFunctions from './UtilityFunctions';
 import axios from 'axios';
+
 // import Content from '../components/Content';
 
 class App extends Component {
@@ -27,18 +28,18 @@ class App extends Component {
     completeWeatherApi: '',
     rawWeatherData: '',
     currentWeather: [
-      { full_location: 'New York, NY, USA' },
-      { formatted_lat: '40.7128°N' },
-      { formatted_long: '74.005°W' },
-      { time: 'Thu, Aug 12, 2019 4:21 AM' },
-      { temp: '30' },
-      { todayHighLow: [
-        { todayTempHigh: '39' },
-        { todayTempHighTime: '2:00 pm' },
-        { todayTempLow: '20' },
-        { todayTempLowTime: '7:00 am' }
-      ]},
-      { summary: 'Mostly Cloudy' },
+      { full_location: '' },
+      { formatted_lat: '' },
+      { formatted_long: '' },
+      { time: '' },
+      { temp: '' },
+      { todayHighLow: {
+         todayTempHigh: '' ,
+         todayTempHighTime: '' ,
+         todayTempLow: '' ,
+         todayTempLowTime: '' 
+      }},
+      { summary: '' },
       { possibility: ''}
     ],
     tempToday: [
@@ -91,7 +92,10 @@ class App extends Component {
           <p>format_lat: {this.state.currentWeather[1].formatted_lat} format_long: {this.state.currentWeather[2].formatted_long} full_location: {this.state.currentWeather[0].full_location}</p>
         </div>
         <button onClick={this.fetchWeatherData}>
-            Simple button
+            Fetch Weather Data
+        </button>
+        <button onClick={this.setCurrentWeatherArray}>
+            Set Current Weather Array
         </button>
         <div className="wrapper-left">
           <div id="current-weather">
@@ -103,18 +107,18 @@ class App extends Component {
             <div className="max-desc">
               <div id="max-detail">
                 <i>▲</i>
-                {this.state.currentWeather[5].todayHighLow[0].todayTempHigh}
+                {this.state.currentWeather[5].todayHighLow.todayTempHigh}
                 <span>°C</span>
               </div>
-              <div id="max-summary">at {this.state.currentWeather[5].todayHighLow[1].todayTempHighTime}</div>
+              <div id="max-summary">at {this.state.currentWeather[5].todayHighLow.todayTempHighTime}</div>
             </div>
             <div className="min-desc">
               <div id="min-detail">
                 <i>▼</i>
-                {this.state.currentWeather[5].todayHighLow[2].todayTempLow}
+                {this.state.currentWeather[5].todayHighLow.todayTempLow}
                 <span>°C</span>
               </div>
-              <div id="min-summary">at {this.state.currentWeather[5].todayHighLow[3].todayTempLowTime}</div>
+              <div id="min-summary">at {this.state.currentWeather[5].todayHighLow.todayTempLowTime}</div>
             </div>
           </div>
           <div className="wrapper-right">
@@ -178,8 +182,8 @@ class App extends Component {
       if (loc === city.name) {
         this.setState({lat: city.lat});
         this.setState({long: city.long});
-        coords.lat = this.state.lat;
-        coords.long = this.state.long;
+        coords.lat = city.lat;
+        coords.long = city.long;
         coords.full_location = city.full_location;
       } 
       return null;
@@ -187,8 +191,8 @@ class App extends Component {
     return coords;
   }
 
-  setFormatCoordinates = async () => {
-    const coordinates = await this.getCoordinates();
+  setFormatCoordinates = () => {
+    const coordinates = this.getCoordinates();
     let form_lat = '';
     let form_long = '';
     let currentWeatherCopy = JSON.parse(JSON.stringify(this.state.currentWeather));
@@ -205,7 +209,7 @@ class App extends Component {
     if (coordinates.long > 0) {
       form_long = (Math.round(coordinates.long * 10000) / 10000).toString() + '°E';
     } else if (coordinates.long < 0) {
-      form_long = (-1 * (Math.round(coordinates.long * 10000) / 10000)).toString() +'°W';
+      form_long = (-1 * (Math.round(coordinates.long * 10000) / 10000)).toString() + '°W';
     } else {
       form_long = (Math.round(coordinates.long * 10000) / 10000).toString();
     }
@@ -236,6 +240,84 @@ class App extends Component {
     .catch(error => {
       alert(error);
     });
+  }
+
+  getTimezone = () => {
+    return this.state.rawWeatherData.timezone;
+  }
+
+  getCurrentTime = () => {
+    const currentTime = this.state.rawWeatherData.currently.time;
+    const timezone = this.getTimezone();
+    return this.utilFunctions.unixToHuman(timezone, currentTime).fullTime;
+  }
+
+  getSummary = () => {
+    let currentSummary = this.utilFunctions.convertToTitleCase(this.state.rawWeatherData.currently.summary);
+    if (currentSummary.includes(' And'))  {
+      currentSummary = currentSummary.replace(' And', ', ');
+    }
+    return currentSummary;
+  }
+
+  getPossibility = () => {
+    let possible = this.utilFunctions.formatPossibility(this.state.rawWeatherData.daily.icon);
+    if (possible.includes(' And')) {
+      possible = possible.replace(' And', ', ');
+    }
+    return possible;
+  }
+
+  getCurrentTemp = () => {
+    let currentTemp = this.state.rawWeatherData.currently.temperature;
+    currentTemp = this.utilFunctions.fahToCel(currentTemp);
+    return currentTemp;
+  }
+
+  getTodayDetails = () => {
+    return this.state.rawWeatherData.daily.data[0];
+  }
+
+  getTodayTempHighLowWithTime = () => {
+    const timezone = this.getTimezone();
+    const todayDetails = this.getTodayDetails();
+    var TodayHighLowWithTimeArray = [
+      {todayTempHigh: ''},
+      {todayTempHighTime: ''},
+      {todayTempLow: ''},
+      {todayTempLowTime: ''}
+    ];
+    TodayHighLowWithTimeArray.todayTempHigh = this.utilFunctions.fahToCel(todayDetails.temperatureMax);
+    TodayHighLowWithTimeArray.todayTempHighTime = this.utilFunctions.unixToHuman(timezone, todayDetails.temperatureMaxTime).onlyTime;
+    TodayHighLowWithTimeArray.todayTempLow = this.utilFunctions.fahToCel(todayDetails.temperatureMin);
+    TodayHighLowWithTimeArray.todayTempLowTime  = this.utilFunctions.unixToHuman(timezone, todayDetails.temperatureMinTime).onlyTime;
+    
+    return TodayHighLowWithTimeArray;
+  }
+
+  setCurrentWeatherArray = () => {
+    let currentWeatherCopy = JSON.parse(JSON.stringify(this.state.currentWeather));
+    currentWeatherCopy[3].time = this.getCurrentTime();
+    currentWeatherCopy[4].temp = this.getCurrentTemp();
+    currentWeatherCopy[5].todayHighLow = this.getTodayTempHighLowWithTime();
+    currentWeatherCopy[6].summary = this.getSummary();
+    currentWeatherCopy[7].possibility = this.getPossibility();
+
+    this.setState({currentWeather: currentWeatherCopy});
+  }
+
+  getHourlyInfoToday = () => {
+    return this.rawWeatherData.currently.time;
+  }
+
+  getHourlyTempInfoToday = () => {
+    const unixTime = this.rawWeatherData.currently.time;
+    const timezone = this.getTimezone();
+    const todayMonthDate = this.utilFunctions.unixToHuman(timezone, unixTime).onlyMonthDate;
+    const hourlyData = this.getHourlyInfoToday();
+    for (let i = 0; i < hourlyData.length; i++) {
+      
+    }
   }
 }
 
