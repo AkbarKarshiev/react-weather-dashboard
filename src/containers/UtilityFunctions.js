@@ -43,7 +43,8 @@ export default class UtilityFunctions {
     //Function to convert temperature in Fahranheit to Celcius
     // Input: 77 (F) => OutpuT: 25 (C)
     fahToCel(tempInFahrenheit) {
-        var tempInCelcius = Math.round((5 / 9) * (tempInFahrenheit - 32));
+        const tempInCelcius = Math.round((5 / 9) * (tempInFahrenheit - 32));
+        // console.log(tempInCelcius);
         return tempInCelcius;
     }
 

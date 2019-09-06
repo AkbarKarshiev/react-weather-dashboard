@@ -4,8 +4,8 @@ import calendar from '../assets/calendar.svg';
 import locationSvg from '../assets/location.svg';
 import search from '../assets/search.svg';
 import UtilityFunctions from './UtilityFunctions';
-import axios from 'axios';
-// import Content from '../components/Content';
+import axios from 'axios';  
+import Content from '../components/Content';
 
 class App extends Component {
 
@@ -16,7 +16,7 @@ class App extends Component {
   cityLocations = [
     {id: 1, name: 'Tashkent', lat: '41.2995', long: '69.2401', full_location: 'Taskent, Uzbekistan'},
     {id: 2, name: 'Samarkand', lat: '39.6270', long: '66.9750', full_location: 'Samarkand, Uzbekistan'},
-    {id: 3, name: 'New York', lat: '40.7128', long: '74.005', full_location: 'New York, NY, USA'}
+    {id: 3, name: 'Moscow', lat: '55.7558', long: '37.6173', full_location: 'Moscow, Russia'}
   ]
 
   state = {
@@ -45,10 +45,10 @@ class App extends Component {
       
     ],
     highlights: [
-      { uvindex: null },
-      { visibility: null },
+      { uvIndex: 0 },
+      { visibility: 0 },
       { windstatus: [
-        { windSpeed: '' },
+        { windSpeed: 0 },
         { windDirection: '' },
         { derivedWindDirection: '' }
       ]}
@@ -63,18 +63,13 @@ class App extends Component {
           <select className="custom-select custom-select-sm" ref={this.selectInput}>>
             <option value="tashkent" defaultValue>Tashkent</option>
             <option value="samarkand">Samarkand</option>
-            <option value="new york">New York</option>
+            <option value="moscow">Moscow</option>
           </select>
           <button id="search-btn" onClick={this.handleChoice}>
             <img src={search} width="15" height="15" alt="search"/>
           </button>
           <p>{this.state.location}</p>
-          <p>format_lat: {this.state.currentWeather[1].formatted_lat} format_long: {this.state.currentWeather[2].formatted_long} full_location: {this.state.currentWeather[0].full_location}</p>
-          <p>rawWeatherData: {this.state.rawWeatherData.offset}</p>
         </div>
-        <button onClick={this.fetchWeatherData}>
-          fetchWeatherData
-        </button>
         <div className="wrapper-left">
           <div id="current-weather">
             {this.state.currentWeather[4].temp}
@@ -123,17 +118,18 @@ class App extends Component {
             </div>
           </div>
         </div>        
-        {/* <Content 
+        <Content 
           tempToday={this.state.tempToday}
           highlights={this.state.highlights}
-        /> */}
+        />
       </div>
     );
   }
 
-  handleChoice = () => {
+  handleChoice = async () => {
     const loc = this.utilFunctions.convertToTitleCase(this.selectInput.current.value);
-    this.setState({location: loc});
+    await this.setState({location: loc});
+    this.fetchWeatherDataAndOrganizeAllDetails();
   }
 
   makeTempTodayEmpty = () => {
@@ -211,7 +207,6 @@ class App extends Component {
     axios.get(this.state.completeWeatherApi)
     .then(response => {
       this.setState({rawWeatherData: response.data});
-      console.log(this.state.rawWeatherData);
     })
     .catch(error => {
       alert(error);
@@ -252,6 +247,7 @@ class App extends Component {
 
   getCurrentTemp = () => {
     let currentTemp = this.state.rawWeatherData.currently.temperature;
+    console.log("CurrentTempType: " +  this.state.rawWeatherData.currently.temperature)
     currentTemp = this.utilFunctions.fahToCel(currentTemp);
     return currentTemp;
   }
@@ -303,9 +299,10 @@ class App extends Component {
       const hourlyOnlyTime = hourlyTimaAllTypes.onlyTime;
       const hourlyMonthDate = hourlyTimaAllTypes.onlyMonthDate;
       if (todayMonthDate === hourlyMonthDate) {
-        let hourlyObject = { hour: '', temp: ''};
+        let hourlyObject = { id: null, hour: '', temp: ''};
+        hourlyObject.id = i;
         hourlyObject.hour = hourlyOnlyTime;
-        hourlyObject.temp = this.utilFunctions.fahToCel(hourlyData[i].temperature).toString();
+        hourlyObject.temp = this.utilFunctions.fahToCel(hourlyData[i].temperature);
         hourlyTempInfoTodayArray.push(hourlyObject);
       }
     }
@@ -315,7 +312,20 @@ class App extends Component {
      this.tempVar.tempToday. We need to add the points for minimum temperature
      and maximum temperature so that the chart gets generated with atleast four points.
     */
-    
+    if (hourlyTempInfoTodayArray.length <= 2) {
+      const minTempObject = {
+        id: 1,
+        hour: this.state.currentWeather[5].todayHighLow[1].todayTempHighTime,
+        temp: this.state.currentWeather[5].todayHighLow[0].todayTempHigh
+      }
+      const maxTempObject = {
+        id: 2,
+        hour: this.state.currentWeather[5].todayHighLow[3].todayTempLowTime,
+        temp: this.state.currentWeather[5].todayHighLow[2].todayTempLow
+      }
+
+      hourlyTempInfoTodayArray = hourlyTempInfoTodayArray.unshift(maxTempObject, minTempObject);
+    }
     this.setState({tempToday: hourlyTempInfoTodayArray});
   }
 

@@ -7,7 +7,7 @@ const content = (props) => {
     return (
         <div>
             <UVIndex 
-                uvindex={props.highlights[0].uvindex}
+                uvindex={props.highlights[0].uvIndex}
             />
             <Visibility
                 visibility={props.highlights[1].visibility}

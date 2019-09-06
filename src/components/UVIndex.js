@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 class UVIndex extends Component {
+    
     render() {
         return (
             <div>  
