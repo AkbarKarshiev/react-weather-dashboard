@@ -5,7 +5,6 @@ import locationSvg from '../assets/location.svg';
 import search from '../assets/search.svg';
 import UtilityFunctions from './UtilityFunctions';
 import axios from 'axios';
-
 // import Content from '../components/Content';
 
 class App extends Component {
@@ -33,44 +32,25 @@ class App extends Component {
       { formatted_long: '' },
       { time: '' },
       { temp: '' },
-      { todayHighLow: {
-         todayTempHigh: '' ,
-         todayTempHighTime: '' ,
-         todayTempLow: '' ,
-         todayTempLowTime: '' 
-      }},
+      { todayHighLow:  [
+         { todayTempHigh: '' },
+         { todayTempHighTime: '' },
+         { todayTempLow: '' },
+         { todayTempLowTime: '' } 
+      ]},
       { summary: '' },
       { possibility: ''}
     ],
     tempToday: [
-      { id: 1, hour: '4.00 AM', temp: '15' },
-      { id: 2, hour: '5.00 AM', temp: '16'},
-      { id: 3, hour: '6.00 AM', temp: '19'},
-      { id: 4, hour: '7.00 AM', temp: '19'},
-      { id: 5, hour: '8.00 AM', temp: '20'},
-      { id: 6, hour: '9.00 AM', temp: '22'}, 
-      { id: 7, hour: '10.00 AM', temp: '26'},
-      { id: 8, hour: '11.00 AM', temp: '30'},
-      { id: 9, hour: '12.00 PM', temp: '31'},
-      { id: 10, hour: '1.00 PM', temp: '32'},
-      { id: 11, hour: '2.00 PM', temp: '33'},
-      { id: 12, hour: '3.00 PM', temp: '34'},     
-      { id: 13, hour: '4.00 PM', temp: '34'},           
-      { id: 14, hour: '5.00 PM', temp: '32'},
-      { id: 15, hour: '6.00 PM', temp: '30'},
-      { id: 16, hour: '7.00 PM', temp: '28'},     
-      { id: 17, hour: '8.00 PM', temp: '26'},
-      { id: 18, hour: '9.00 PM', temp: '26'},
-      { id: 19, hour: '10.00 PM', temp: '24'},
-      { id: 20, hour: '11.00 PM', temp: '23'}, 
+      
     ],
     highlights: [
-      { uvindex: 4 },
-      { visibility: 12 },
+      { uvindex: null },
+      { visibility: null },
       { windstatus: [
-        { windSpeed: "30 km/h" },
-        { windDirection: "30" },
-        { derivedWindDirection: 'NNE' }
+        { windSpeed: '' },
+        { windDirection: '' },
+        { derivedWindDirection: '' }
       ]}
     ]  
   };
@@ -90,12 +70,10 @@ class App extends Component {
           </button>
           <p>{this.state.location}</p>
           <p>format_lat: {this.state.currentWeather[1].formatted_lat} format_long: {this.state.currentWeather[2].formatted_long} full_location: {this.state.currentWeather[0].full_location}</p>
+          <p>rawWeatherData: {this.state.rawWeatherData.offset}</p>
         </div>
         <button onClick={this.fetchWeatherData}>
-            Fetch Weather Data
-        </button>
-        <button onClick={this.setCurrentWeatherArray}>
-            Set Current Weather Array
+          fetchWeatherData
         </button>
         <div className="wrapper-left">
           <div id="current-weather">
@@ -107,18 +85,18 @@ class App extends Component {
             <div className="max-desc">
               <div id="max-detail">
                 <i>▲</i>
-                {this.state.currentWeather[5].todayHighLow.todayTempHigh}
+                {this.state.currentWeather[5].todayHighLow[0].todayTempHigh}
                 <span>°C</span>
               </div>
-              <div id="max-summary">at {this.state.currentWeather[5].todayHighLow.todayTempHighTime}</div>
+              <div id="max-summary">at {this.state.currentWeather[5].todayHighLow[1].todayTempHighTime}</div>
             </div>
             <div className="min-desc">
               <div id="min-detail">
                 <i>▼</i>
-                {this.state.currentWeather[5].todayHighLow.todayTempLow}
+                {this.state.currentWeather[5].todayHighLow[2].todayTempLow}
                 <span>°C</span>
               </div>
-              <div id="min-summary">at {this.state.currentWeather[5].todayHighLow.todayTempLowTime}</div>
+              <div id="min-summary">at {this.state.currentWeather[5].todayHighLow[3].todayTempLowTime}</div>
             </div>
           </div>
           <div className="wrapper-right">
@@ -154,7 +132,6 @@ class App extends Component {
   }
 
   handleChoice = () => {
-    // console.log(this.selectInput.current.value);
     const loc = this.utilFunctions.convertToTitleCase(this.selectInput.current.value);
     this.setState({location: loc});
   }
@@ -167,7 +144,7 @@ class App extends Component {
     if(this.state.location === '') {
       this.setState({location: 'Tashkent'});
     }
-    // this.makeTempTodayEmpty();
+    this.makeTempTodayEmpty();
   }
 
   getCoordinates = () => {
@@ -226,16 +203,21 @@ class App extends Component {
       'https://csm.fusioncharts.com/files/assets/wb/wb-data.php?src=darksky&lat=' + 
       this.state.lat + '&long=' + 
       this.state.long;
-    console.log(weatherApi);
     this.setState({completeWeatherApi: weatherApi});
   }
 
-  fetchWeatherData = async () => {
+  fetchWeatherDataAndOrganizeAllDetails = async () => { // Final function
     await this.fixWeatherApi();
     axios.get(this.state.completeWeatherApi)
     .then(response => {
       this.setState({rawWeatherData: response.data});
       console.log(this.state.rawWeatherData);
+    })
+    .catch(error => {
+      alert(error);
+    })
+    .then(data => {
+     this.organizeAllDetails();
     })
     .catch(error => {
       alert(error);
@@ -287,15 +269,15 @@ class App extends Component {
       {todayTempLow: ''},
       {todayTempLowTime: ''}
     ];
-    TodayHighLowWithTimeArray.todayTempHigh = this.utilFunctions.fahToCel(todayDetails.temperatureMax);
-    TodayHighLowWithTimeArray.todayTempHighTime = this.utilFunctions.unixToHuman(timezone, todayDetails.temperatureMaxTime).onlyTime;
-    TodayHighLowWithTimeArray.todayTempLow = this.utilFunctions.fahToCel(todayDetails.temperatureMin);
-    TodayHighLowWithTimeArray.todayTempLowTime  = this.utilFunctions.unixToHuman(timezone, todayDetails.temperatureMinTime).onlyTime;
+    TodayHighLowWithTimeArray[0].todayTempHigh = this.utilFunctions.fahToCel(todayDetails.temperatureMax);
+    TodayHighLowWithTimeArray[1].todayTempHighTime = this.utilFunctions.unixToHuman(timezone, todayDetails.temperatureMaxTime).onlyTime;
+    TodayHighLowWithTimeArray[2].todayTempLow = this.utilFunctions.fahToCel(todayDetails.temperatureMin);
+    TodayHighLowWithTimeArray[3].todayTempLowTime  = this.utilFunctions.unixToHuman(timezone, todayDetails.temperatureMinTime).onlyTime;
     
     return TodayHighLowWithTimeArray;
   }
 
-  setCurrentWeatherArray = () => {
+  setCurrentWeatherInfo = () => {
     let currentWeatherCopy = JSON.parse(JSON.stringify(this.state.currentWeather));
     currentWeatherCopy[3].time = this.getCurrentTime();
     currentWeatherCopy[4].temp = this.getCurrentTemp();
@@ -307,17 +289,82 @@ class App extends Component {
   }
 
   getHourlyInfoToday = () => {
-    return this.rawWeatherData.currently.time;
+    return this.state.rawWeatherData.hourly.data;
   }
 
-  getHourlyTempInfoToday = () => {
-    const unixTime = this.rawWeatherData.currently.time;
+  getSetHourlyTempInfoToday = () => {
+    const unixTime = this.state.rawWeatherData.currently.time;
     const timezone = this.getTimezone();
     const todayMonthDate = this.utilFunctions.unixToHuman(timezone, unixTime).onlyMonthDate;
     const hourlyData = this.getHourlyInfoToday();
+    const hourlyTempInfoTodayArray = [];
     for (let i = 0; i < hourlyData.length; i++) {
-      
+      const hourlyTimaAllTypes = this.utilFunctions.unixToHuman(timezone, hourlyData[i].time);
+      const hourlyOnlyTime = hourlyTimaAllTypes.onlyTime;
+      const hourlyMonthDate = hourlyTimaAllTypes.onlyMonthDate;
+      if (todayMonthDate === hourlyMonthDate) {
+        let hourlyObject = { hour: '', temp: ''};
+        hourlyObject.hour = hourlyOnlyTime;
+        hourlyObject.temp = this.utilFunctions.fahToCel(hourlyData[i].temperature).toString();
+        hourlyTempInfoTodayArray.push(hourlyObject);
+      }
     }
+    /*
+     To cover the edge case where the local time is between 10 — 12 PM,
+     and therefore there are only two elements in the array
+     this.tempVar.tempToday. We need to add the points for minimum temperature
+     and maximum temperature so that the chart gets generated with atleast four points.
+    */
+    
+    this.setState({tempToday: hourlyTempInfoTodayArray});
+  }
+
+  getUVIndex = () => {
+    return  this.state.rawWeatherData.currently.uvIndex;    
+  }
+
+  getVisibility = () => {
+    const visibilityInMiles = this.state.rawWeatherData.currently.visibility;
+    return this.utilFunctions.mileToKilometer(visibilityInMiles);
+  }
+
+  getWindStatus = () => {
+    const windStatus = [
+      { windSpeed: '' },
+      { windDirection: '' },
+      { derivedWindDirection: '' }
+    ];
+    const windSpeedInMiles = this.state.rawWeatherData.currently.windSpeed;
+    windStatus[0].windSpeed = this.utilFunctions.mileToKilometer(windSpeedInMiles);
+    const absoluteWindDir = this.state.rawWeatherData.currently.windBearing;
+    windStatus[1].windDirection = absoluteWindDir;
+    windStatus[2].derivedWindDirection = this.utilFunctions.deriveWindDir(absoluteWindDir);
+
+    return windStatus;
+  }
+
+  setTodayHighlightsInfo = () => {
+    const highlightsCopy = [
+      { uvIndex: null },
+      { visibility: null },
+      { windstatus: [] }
+    ];
+
+    highlightsCopy[0].uvIndex = this.getUVIndex();
+    highlightsCopy[1].visibility = this.getVisibility();
+    highlightsCopy[2].windstatus = this.getWindStatus();
+
+    this.setState({highlights: highlightsCopy});
+  }
+
+  // Top level organization and rendering
+  organizeAllDetails = async () => {
+    // top level organization
+    // await this.fetchWeatherData();
+    this.setCurrentWeatherInfo();
+    this.setTodayHighlightsInfo();
+    this.getSetHourlyTempInfoToday();
+    console.log(this.state);
   }
 }
 
