@@ -62,16 +62,16 @@ class App extends Component {
           <div className="row">
             <div id="sidebar" className="col-md-3 col-sm-4 col-xs-12 sidebar">
               <div className="dropDown"> 
-                <select className="custom-select custom-select-sm" ref={this.selectInput}>>
+                <select className="custom-select custom-select-sm" id="dropDownStyle" ref={this.selectInput}>>
                   <option value="tashkent" defaultValue>Tashkent</option>
                   <option value="samarkand">Samarkand</option>
                   <option value="moscow">Moscow</option>
                 </select>
                 <button id="search-btn" onClick={this.handleChoice}>
-                  <img src={search} width="15" height="15" alt="search"/>
+                  <img src={search} width="20" height="20" alt="search"/>
                 </button>
               </div>
-              <div if="info">
+              <div id="info">
                 <div className="wrapper-left">
                   <div id="current-weather">
                     {this.state.currentWeather[4].temp}
@@ -96,78 +96,42 @@ class App extends Component {
                         <div id="min-summary">at {this.state.currentWeather[5].todayHighLow[3].todayTempLowTime}</div>
                     </div>
                   </div> {/*end of temp-max-min*/}
-                </div>
-              </div>
+                </div> {/*end of wrapper-left*/}
+                <div className="wrapper-right">
+                  <div className="date-time-info">
+                    <div id="date-desc">
+                      <img src={calendar} alt="calendar" width="20" height="20"/>
+                      {this.state.currentWeather[3].time}
+                    </div>
+                  </div>
+                  <div className="locaion-info">
+                    <div id="location-desc">
+                      <img src={locationSvg} 
+                        width="10.83"
+                        height="15.83"
+                        style={{opacity: 0.9}}
+                        alt="location"/>
+                      {this.state.currentWeather[0].full_location}
+                      <div id="location-detail" className="mt-1">
+                        Lat: {this.state.currentWeather[1].formatted_lat}
+                        <br/>
+                        Long: {this.state.currentWeather[2].formatted_long}
+                      </div>
+                    </div>
+                  </div> {/*end of location-info*/}
+                </div> {/*end of wrapper-right*/}
+              </div> {/*end of info*/}
             </div>
+            <Content 
+              className="col-md-9 col-sm-8 col-xs-12 content"
+              tempToday={this.state.tempToday}
+              highlights={this.state.highlights}
+            />
           </div>
         </div>
       </div>
-      // <div id="info">  
-      //   {/* dropdown selection */}
-      //   <div className="dropDown"> 
-      //     <select className="custom-select custom-select-sm" ref={this.selectInput}>>
-      //       <option value="tashkent" defaultValue>Tashkent</option>
-      //       <option value="samarkand">Samarkand</option>
-      //       <option value="moscow">Moscow</option>
-      //     </select>
-      //     <button id="search-btn" onClick={this.handleChoice}>
-      //       <img src={search} width="15" height="15" alt="search"/>
-      //     </button>
-      //     <p>{this.state.location}</p>
-      //   </div>
-      //   <div className="wrapper-left">
-          // <div id="current-weather">
-          //   {this.state.currentWeather[4].temp}
-          //   <span>°C</span>
-          // </div>
-      //     <div id="weather-desc">{this.state.currentWeather[6].summary}</div>
-      //     <div className="temp-max-min">
-      //       <div className="max-desc">
-      //         <div id="max-detail">
-      //           <i>▲</i>
-      //           {this.state.currentWeather[5].todayHighLow[0].todayTempHigh}
-      //           <span>°C</span>
-      //         </div>
-      //         <div id="max-summary">at {this.state.currentWeather[5].todayHighLow[1].todayTempHighTime}</div>
-      //       </div>
-      //       <div className="min-desc">
-      //         <div id="min-detail">
-      //           <i>▼</i>
-      //           {this.state.currentWeather[5].todayHighLow[2].todayTempLow}
-      //           <span>°C</span>
-      //         </div>
-      //         <div id="min-summary">at {this.state.currentWeather[5].todayHighLow[3].todayTempLowTime}</div>
-      //       </div>
-      //     </div>
-      //     <div className="wrapper-right">
-      //       <div className="date-time-info">
-      //         <div id="date-desc">
-      //           <img src={calendar} alt="calendar" width="20" height="20"/>
-      //           {this.state.currentWeather[3].time}
-      //         </div>
-      //       </div>
-      //       <div className="locaion-info">
-      //         <div id="location-desc">
-      //           <img src={locationSvg} 
-      //             width="10.83"
-      //             height="15.83"
-      //             style={{opacity: 0.9}}
-      //             alt="location"/>
-      //           {this.state.currentWeather[0].full_location}
-      //           <div id="location-detail" className="mt-1">
-      //             Lat: {this.state.currentWeather[1].formatted_lat}
-      //             <br/>
-      //             Long: {this.state.currentWeather[2].formatted_long}
-      //           </div>
-      //         </div>
-      //       </div>
-      //     </div>
-      //   </div>        
-      //   <Content 
-      //     tempToday={this.state.tempToday}
-      //     highlights={this.state.highlights}
-      //   />
-      // </div>
+            
+        
     );
   }
 
@@ -424,10 +388,7 @@ class App extends Component {
   async componentDidMount() {
     const loc = this.utilFunctions.convertToTitleCase(this.selectInput.current.value);
     await this.setState({location: loc});
-    try {
-      this.fetchWeatherDataAndOrganizeAllDetails();
-    } catch (error) {alert(error);}
-    
+    this.fetchWeatherDataAndOrganizeAllDetails();
   }
 }
 

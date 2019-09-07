@@ -5,7 +5,6 @@
 }
 
 body {
-   /* background-color: #000; */
    font-family: Roboto;
    font-weight: 400;
    width: 100%;
@@ -18,12 +17,6 @@ body {
    display: flex;
    flex-direction: column;
    background-image: linear-gradient(-180deg, #80b6db 0%, #7da7e2 100%);
-}
-
-#search {
-   text-align: center;
-   height: 20vh;
-   position: relative;
 }
 
 #location-input {
@@ -50,14 +43,14 @@ body {
 }
 
 #current-weather {
-   color: #000000;
+   color: #ffffff;
    font-size: 8rem;
    line-height: 106px;
    position: relative;
 }
 
 #current-weather>span {
-   color: #000000;
+   color: #ffffff;
    font-size: 3.6rem;
    line-height: 42px;
    vertical-align: super;
@@ -68,13 +61,13 @@ body {
 
 #weather-desc {
    font-size: 2.0rem;
-   color: #000;
+   color: #fff;
    font-weight: 500;
    line-height: 24px;
 }
 
 #possibility {
-   color: #000;
+   color: #fff;
    font-size: 16px;
    font-weight: 500;
    line-height: 19px;
@@ -82,7 +75,7 @@ body {
 
 #max-detail,
 #min-detail {
-   color: #000;
+   color: #fff;
    font-size: 2.0rem;
    font-weight: 500;
    line-height: 24px;
@@ -98,7 +91,7 @@ body {
 
 #max-detail>span,
 #min-detail>span {
-   color: #000;
+   color: #fff;
    font-family: Roboto;
    font-size: 1.2rem;
    line-height: 10px;
@@ -108,21 +101,32 @@ body {
 #max-summary,
 #min-summary {
    opacity: 0.9;
-   color: #000;
+   color: #ffffff;
    font-size: 1.4rem;
    line-height: 16px;
    margin-top: 2px;
    opacity: 0.7;
 }
 
+#dropDownStyle {
+   margin: 30px 3px 20px 30px;
+   font-size: 1.8rem;
+   color: #fff;
+   height: 30px;
+   background-color: #9CC4E2;
+}
+
+#dropDownStyle:after {
+   color: #fff;
+}
+
 #search-btn {
    position: absolute;
-   margin-left: 5px;
-   top: 0px;
+   top: 30px;
    padding: 2px;
    z-index: 999;
-   height: 21px;
-   width: 21px;
+   height: 30px;
+   width: 30px;
    background-color: rgba(255, 255, 255, 0.2);
    border: none;
 }
@@ -138,7 +142,7 @@ body {
 
 #date-desc,
 #location-desc {
-   color: #000;
+   color: #fff;
    font-size: 1.6rem;
    font-weight: 500;
    line-height: 19px;
@@ -160,7 +164,7 @@ body {
 
 #location-detail {
    opacity: 0.7;
-   color: #000;
+   color: #fff;
    font-size: 1.4rem;
    line-height: 20px;
    margin-left: 35px;
@@ -191,6 +195,8 @@ body {
    font-size: 1.6rem;
    font-weight: 500;
 }
+
+
 
 .custom-card {
    background-color: #FFFFFF !important;
@@ -247,7 +253,7 @@ body {
 }
 
 .card-value {
-   color: #000000;
+   color: #ffffff;
    font-size: 1.8rem;
    line-height: 21px;
 }
@@ -271,7 +277,7 @@ hr {
 
    #info {
        position: fixed;
-       /* bottom: 50px; */
+       bottom: 50px;
        width: 100%;
        padding-left: 15px;
    }
