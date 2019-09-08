@@ -78,8 +78,8 @@ class App extends Component {
                     <span>°C</span>
                   </div>
                   <div id="weather-desc">{this.state.currentWeather[6].summary}</div>
-                  <div class="temp-max-min">
-                    <div class="max-desc">
+                  <div className="temp-max-min">
+                    <div className="max-desc">
                       <div id="max-detail">
                         <i>▲</i>
                         {this.state.currentWeather[5].todayHighLow[0].todayTempHigh}
@@ -87,7 +87,7 @@ class App extends Component {
                       </div>
                       <div id="max-summary">at {this.state.currentWeather[5].todayHighLow[1].todayTempHighTime}</div>
                     </div>
-                    <div class="min-desc">
+                    <div className="min-desc">
                       <div id="min-detail">
                         <i>▼</i>
                         {this.state.currentWeather[5].todayHighLow[2].todayTempLow}
@@ -122,11 +122,13 @@ class App extends Component {
                 </div> {/*end of wrapper-right*/}
               </div> {/*end of info*/}
             </div>
-            <Content 
-              className="col-md-9 col-sm-8 col-xs-12 content"
-              tempToday={this.state.tempToday}
-              highlights={this.state.highlights}
-            />
+            <div id="dashboard-content" className="col-md-9 col-sm-8 col-xs-12 content">
+              <Content  
+                tempToday={this.state.tempToday}
+                highlights={this.state.highlights}
+              />
+            </div>
+            
           </div>
         </div>
       </div>
@@ -256,7 +258,6 @@ class App extends Component {
 
   getCurrentTemp = () => {
     let currentTemp = this.state.rawWeatherData.currently.temperature;
-    console.log("CurrentTempType: " +  this.state.rawWeatherData.currently.temperature)
     currentTemp = this.utilFunctions.fahToCel(currentTemp);
     return currentTemp;
   }
@@ -302,7 +303,7 @@ class App extends Component {
     const timezone = this.getTimezone();
     const todayMonthDate = this.utilFunctions.unixToHuman(timezone, unixTime).onlyMonthDate;
     const hourlyData = this.getHourlyInfoToday();
-    const hourlyTempInfoTodayArray = [];
+    let hourlyTempInfoTodayArray = [];
     for (let i = 0; i < hourlyData.length; i++) {
       const hourlyTimaAllTypes = this.utilFunctions.unixToHuman(timezone, hourlyData[i].time);
       const hourlyOnlyTime = hourlyTimaAllTypes.onlyTime;
@@ -334,7 +335,7 @@ class App extends Component {
       }
 
       hourlyTempInfoTodayArray = hourlyTempInfoTodayArray.unshift(maxTempObject, minTempObject);
-    }
+    }    
     this.setState({tempToday: hourlyTempInfoTodayArray});
   }
 

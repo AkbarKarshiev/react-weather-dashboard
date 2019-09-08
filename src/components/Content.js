@@ -3,17 +3,15 @@ import TempVarChart from './TempVarChart';
 import Highlights from './Highlights';
 
 const content = (props) => {
+    // console.log(props);
     return (
-        <div>
-            <p><b>This is Content component</b></p>
-            <hr/>
+        <div style={{position: 'relative'}}>
             <TempVarChart
                 tempToday={props.tempToday}
             />
             <Highlights
                 highlights={props.highlights}
-            />
-            
+            /> 
         </div>
     );
 }
