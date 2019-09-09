@@ -1,13 +1,24 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactFC from 'react-fusioncharts';
 import FusionCharts from 'fusioncharts';
 import SingleSeriesSpline2D from 'fusioncharts/fusioncharts.charts';
 import FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion';
+
 ReactFC.fcRoot(FusionCharts, SingleSeriesSpline2D, FusionTheme);
 
-class TempVarChart extends Component {
-   
-    state = {
+const tempVarChart = (props) => {
+    const setChartData = (props) => {
+        let data = [];
+        for(let i=0; i < props.tempToday.length; i++) {
+            const dataObject = {
+                label: props.tempToday[i].hour,
+                value: props.tempToday[i].temp
+            };
+            data.push(dataObject);
+        }
+        return data;
+    }
+    const chartConfigs = {
         type: 'spline',
         renderAt: "chartContainer",
         width: "100%",
@@ -45,52 +56,15 @@ class TempVarChart extends Component {
             ]
         }
     }
- 
-    render() {
-        console.log(this.props.tempToday);
-        const chartConfigs = {
-            
-        }
-        return (       
-            <div className="custom-card header-card card">
-                <div className="card-body pt-0">
-                    <ReactFC 
-                    {...this.state}/>
-                </div>
+    chartConfigs.dataSource.data = setChartData(props);
+    return (         
+        <div className="custom-card header-card card">
+            <div className="card-body pt-0">
+                <ReactFC 
+                {...chartConfigs}/>
             </div>
-        );
-    }
-
-    // setChartData = (nextProps) => {
-    //     let data = [];
-    //     for(let i=0; i < nextProps.tempToday.length; i++) {
-    //         const dataObject = {
-    //             label: nextProps.tempToday[i].hour,
-    //             value: nextProps.tempToday[i].temp
-    //         };
-    //         data.push(dataObject);
-    //     }
-    //     return data;
-    // }
-
-    // componentWillReceiveProps(nextProps) {
-        
-    //     if (nextProps.tempToday !== this.props.tempToday) {
-    //         console.log("new props received");
-    //         console.log(nextProps);
-    //         this.setState({tempToday: this.setChartData(nextProps)});
-    //     }
-    // }
-    // componentDidMount() {
-    //     this.setState({tempToday: this.props.tempToday});
-    //     console.log(this.state);
-    // }
-    // componentWillUpdate() {
-    //     if(this.props.tempToday.length !== 0){
-    //         console.log(this.props.tempToday);
-    //         this.setChartData();
-    //     }
-    // }
+        </div>
+    );
 }
 
-export default TempVarChart;
+export default tempVarChart;

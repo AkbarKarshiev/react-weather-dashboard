@@ -3,7 +3,6 @@ import TempVarChart from './TempVarChart';
 import Highlights from './Highlights';
 
 const content = (props) => {
-    // console.log(props);
     return (
         <div style={{position: 'relative'}}>
             <TempVarChart
