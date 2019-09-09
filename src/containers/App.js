@@ -309,10 +309,9 @@ class App extends Component {
       const hourlyOnlyTime = hourlyTimaAllTypes.onlyTime;
       const hourlyMonthDate = hourlyTimaAllTypes.onlyMonthDate;
       if (todayMonthDate === hourlyMonthDate) {
-        let hourlyObject = { id: null, hour: '', temp: ''};
-        hourlyObject.id = i;
-        hourlyObject.hour = hourlyOnlyTime;
-        hourlyObject.temp = this.utilFunctions.fahToCel(hourlyData[i].temperature);
+        let hourlyObject = {  "label": '', "value": ''};
+        hourlyObject.label = hourlyOnlyTime;
+        hourlyObject.value = this.utilFunctions.fahToCel(hourlyData[i].temperature);
         hourlyTempInfoTodayArray.push(hourlyObject);
       }
     }
@@ -322,20 +321,20 @@ class App extends Component {
      this.tempVar.tempToday. We need to add the points for minimum temperature
      and maximum temperature so that the chart gets generated with atleast four points.
     */
-    if (hourlyTempInfoTodayArray.length <= 2) {
-      const minTempObject = {
-        id: 1,
-        hour: this.state.currentWeather[5].todayHighLow[1].todayTempHighTime,
-        temp: this.state.currentWeather[5].todayHighLow[0].todayTempHigh
-      }
-      const maxTempObject = {
-        id: 2,
-        hour: this.state.currentWeather[5].todayHighLow[3].todayTempLowTime,
-        temp: this.state.currentWeather[5].todayHighLow[2].todayTempLow
-      }
+    // if (hourlyTempInfoTodayArray.length <= 2) {
+    //   const minTempObject = {
+    //     id: 1,
+    //     hour: this.state.currentWeather[5].todayHighLow[1].todayTempHighTime,
+    //     temp: this.state.currentWeather[5].todayHighLow[0].todayTempHigh
+    //   }
+    //   const maxTempObject = {
+    //     id: 2,
+    //     hour: this.state.currentWeather[5].todayHighLow[3].todayTempLowTime,
+    //     temp: this.state.currentWeather[5].todayHighLow[2].todayTempLow
+    //   }
 
-      hourlyTempInfoTodayArray = hourlyTempInfoTodayArray.unshift(maxTempObject, minTempObject);
-    }    
+    //   hourlyTempInfoTodayArray = hourlyTempInfoTodayArray.unshift(maxTempObject, minTempObject);
+    // }    
     this.setState({tempToday: hourlyTempInfoTodayArray});
   }
 

@@ -5,7 +5,11 @@ import WindStatus from './WindStatus';
 
 const content = (props) => {
     return (
-        <div>
+
+        <div className="custom-content-card content-card card">
+        <div className="card-body pb-0">
+        <div className="content-header h4 text-center pt-2 pb-3">Highlights</div>
+          <div className="row">
             <UVIndex 
                 uvindex={props.highlights[0].uvIndex}
             />
@@ -14,8 +18,10 @@ const content = (props) => {
             />
             <WindStatus 
                 windstatus={props.highlights[2].windstatus}
-            />            
+            />      
+          </div>
         </div>
+      </div>
     );
 }
 
